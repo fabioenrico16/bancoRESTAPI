@@ -8,32 +8,17 @@ from bd import Repositorio
 import json
 from fastapi.encoders import jsonable_encoder
 
+from models.pago import Pago
+
 app = FastAPI()
 
 
 #Recursos
 # 1 - Cliente
-# Registrar - POST /clientes
-# listar - GET /clientes
-# consultar- GET /clientes/{pk} 
-# actualizar- PUT /clientes/{pk}
-# eliminar - DELETE /clientes/{pk}
-
 # 2 - Pago 
-# - POST /pagos
-# - GET /pagos
-# - GET /pagos/{pk} 
-# - PUT /pagos/{pk}
-# - DELETE /pagos/{pk}
 
-@app.get("/clientes/morosos", operation_id="clientes_morosos",
-    summary="Listado de cliente morosos",
-    description="Listado de clientes morosos del ultimo mes correspondiente a la cartera rodados"
-)
-def cliente_morosos():
-    return ["Carlos", "Felipe", "Manuel"]
 
-@app.post("/clientes", operation_id="registar_cliente")
+@app.post("/clientes")
 def registar_cliente(cliente: Cliente):
     Repositorio.insertarCliente(cliente)
     return cliente
@@ -46,8 +31,45 @@ def recuperar_clientes():
 
     return listaJson
 
-
 @app.get("/clientes/{id}")
 def recuperar_cliente(id:int):
     cliente: Cliente= Repositorio.recuperar_cliente(id)
     return cliente
+
+@app.put("/clientes/{id}")
+def modificar_cliente(id:int,cliente:Cliente):
+    clienteDevuelto: Cliente= Repositorio.modificar_cliente(id)
+    return clienteDevuelto
+
+@app.delete("/clientes/{id}")
+def eliminar_cliente(id:int):
+    clienteBorrado: Cliente= Repositorio.eliminar_cliente(id)
+    return clienteBorrado
+
+@app.post("/pagos")
+def registra_pagos(pago: Pago):
+    Repositorio.insertarPago(pago)
+    return pago
+
+@app.get("/pagos")
+def recuperar_pagos():
+    registros: dict[int, Pago]= Repositorio.recuperar_pagos()
+    listObjetos =  list(registros) #lista DE objetos pagos
+    listaJson = jsonable_encoder(listObjetos) #convertimos lista de objetos a json
+
+    return listaJson
+
+@app.put("/pagos/{id}")
+def modificar_pago(id:int,pago:Pago):
+    pagoModificado: Pago = Repositorio.modificar_pago(id)
+    return pagoModificado
+
+@app.delete("/pagos/{id}")
+def eliminar_pago(id:int):
+    pago: Pago= Repositorio.eliminar_pago(id)
+    return Pago
+
+@app.get("/pagos/{id}")
+def recuperar_pago(id:int):
+    pago: Pago= Repositorio.recuperar_pago(id)
+    return pago
