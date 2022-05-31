@@ -8,3 +8,4 @@ class Cliente(BaseModel):
     nro_cuenta: int
     nombre: str
     apellido: str
+    
